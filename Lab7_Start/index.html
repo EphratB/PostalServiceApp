@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Postal Service</title>
+	</head>
+	<body>
+		<image src="iwd_ps_logo.png" width="50%" height="50%" />
+		
+		<!-- Create Parcel -->
+		<fieldset>
+			<legend>Create a Parcel</legend>
+			<div>
+				<strong>Destination: </strong>
+				<select id="createParcel_Destination" style="padding-right: 5px;">
+					<option>Alberta</option>
+					<option>British Columbia</option>
+					<option>Manitoba</option>
+					<option>New Brunswick</option>
+					<option>Newfoundland</option>
+					<option>Northwest Territories</option>
+					<option>Nova Scotia</option>
+					<option>Nunavut</option>
+					<option>Ontario</option>
+					<option>P.E.I</option>
+					<option>Quebec</option>
+					<option>Saskatchewan</option>
+					<option>Yukon</option>
+				</select>
+				<strong>Weight (g): </strong>
+				<input type="number" id="createParcel_Weight" value=0 style="padding-right: 5px;" />
+				<strong>Express Shipping: </strong>
+				<input type="checkbox" id="createParcel_expressShipping" style="transform: scale(1.5);" />
+				<br>
+				<input type="button" value="Create Parcel" onclick="createParcel();" style="margin-top: 10px;" />
+			</div>
+		</fieldset>
+		<br>
+		
+		<!-- Process Parcel -->
+		<fieldset>
+			<legend>Process a Parcel</legend>
+			<div>
+				<strong>Tracking Number: </strong>
+				<input type="text" id="tbTrackingNumber" maxlength=13 style="padding-right: 5px;" />
+				<strong>Set Status: </strong>
+				<select id="processParcel_Status">
+					<option></option>
+					<option>Shipped</option>
+					<option>In Transit</option>
+					<option>Delivered</option>
+				</select>
+				<br>
+				<input type="button" value="Process Parcel" onclick="processParcel();" style="margin-top: 10px;" />
+			</div>
+		</fieldset>
+		<br>
+		
+		<!-- Display Parcel -->
+		<fieldset>
+			<legend>Display Parcels</legend>
+			<div style="padding-bottom: 5px;">
+				<strong>Status: </strong>
+				<select id="displayParcelsFilter" onchange="displayParcels();">
+					<option selected>All</option>
+					<option>Processing</option>
+					<option>Shipped</option>
+					<option>In Transit</option>
+					<option>Delivered</option>
+				</select>
+			</div>
+			<div style="padding-bottom: 5px;"><strong>Tracking Number | Status | Destination | Weight | Express Shipping</strong></div>
+			<div id="displayParcelOutput">[Ouput the list of parcels here]</div>
+		</fieldset>
+		
+		<!-- Javascript -->
+		<script>
+			//pages loads 
+			//displayParcels();
+
+
+			// Parcel Constructor
+
+			function Parcel(tracking_number, status, destination, weight, express){
+				this.tracking_number = tracking_number; //number
+				this.status = status;                   //string
+				this.destination = destination;         //string
+				this.weight = weight;                   //number
+				this.express = express;                 //boolean
+			}
+			// Global parcel array
+			
+			var aParcel = [];
+			aParcel.push(new Parcel(generateTrackingNumber(), "Processing", "Ontrio", 18, true));
+			aParcel.push(new Parcel(generateTrackingNumber(), "Shipped", "Alberta", 34, true));
+			aParcel.push(new Parcel(generateTrackingNumber(), "In Transit", "Manitoba", 12, false));
+			aParcel.push(new Parcel(generateTrackingNumber(), "Delivered", "Quebec", 78, false));
+			aParcel.push(new Parcel(generateTrackingNumber(), "Processing", "Ontrio", 789, true));
+
+			console.log(aParcel);
+
+			//Create a parcel
+			function createParcel(){
+				var destination = document.getElementById('createParcel_Destination').value;
+				var weight = document.getElementById('createParcel_Weight').value;
+				var express_shipping = document.getElementById('createParcel_expressShipping').checked;
+				
+				aParcel.push(new Parcel(generateTrackingNumber(), "Processing", destination, weight, express_shipping));
+				console.log(aParcel);
+
+				displayParcels();
+				
+				
+			}
+
+			// display
+
+
+			function FilterAll(){
+				
+				var display_parcel_output = document.getElementById('displayParcelOutput');
+				display_parcel_output.innerHTML=" ";
+				for(i=0; i<aParcel.length; i++){
+					
+						display_parcel_output.innerHTML += aParcel[i].tracking_number + " | "+ aParcel[i].status + " | "+ aParcel[i].destination + " | "+ aParcel[i].weight +"(g)" + " | "+ aParcel[i].express + "</br>";	
+					}
+				}
+
+
+			function FiterProcess(){
+				
+				var display_parcel_output = document.getElementById('displayParcelOutput');
+				display_parcel_output.innerHTML=" ";
+				for(i=0; i<aParcel.length; i++){
+					if(aParcel[i].status =="Processing"){
+						display_parcel_output.innerHTML += aParcel[i].tracking_number + " | "+ aParcel[i].status + " | "+ aParcel[i].destination + " | "+ aParcel[i].weight +"(g)" + " | "+ aParcel[i].express + "</br>";
+
+					}else{
+						console.log("wrong query");
+
+					}		
+				}
+			}
+
+
+			// Selecting Shipped Packages
+
+			function FiterShipped(){
+				var display_parcel_output = document.getElementById('displayParcelOutput');
+				display_parcel_output.innerHTML=" ";
+				
+				
+				for(i=0; i<aParcel.length; i++){
+					if(aParcel[i].status =="Shipped"){
+						display_parcel_output.innerHTML += aParcel[i].tracking_number + " | "+ aParcel[i].status + " | "+ aParcel[i].destination + " | "+ aParcel[i].weight +"(g)" + " | "+ aParcel[i].express + "</br>";
+
+					}else{
+						console.log("wrong query");
+
+					}		
+				}
+			}
+
+			// Selecting In Transit Packages
+
+			function displayInTransit(){
+				
+				var display_parcel_output = document.getElementById('displayParcelOutput');
+				display_parcel_output.innerHTML=" ";
+				
+				
+				for(i=0; i<aParcel.length; i++){
+					if(aParcel[i].status =="In Transit"){
+						display_parcel_output.innerHTML += aParcel[i].tracking_number + " | "+ aParcel[i].status + " | "+ aParcel[i].destination + " | "+ aParcel[i].weight +"(g)" + " | "+ aParcel[i].express + "</br>";
+
+					}else{
+						console.log("wrong query");
+
+					}		
+				}
+			}
+
+			// Selecting Delivered Packages
+
+			function FiterDelivered(){
+				
+				var display_parcel_output = document.getElementById('displayParcelOutput');
+				display_parcel_output.innerHTML=" ";
+		
+				
+				for(i=0; i<aParcel.length; i++){
+					if(aParcel[i].status =="Delivered"){
+						display_parcel_output.innerHTML += aParcel[i].tracking_number + " | "+ aParcel[i].status + " | "+ aParcel[i].destination + " | "+ aParcel[i].weight +"(g)" + " | "+ aParcel[i].express + "</br>";
+
+					}else{
+						console.log("wrong query");
+
+					}		
+				}
+			}
+
+			// displaying output to div
+
+			function displayParcels(selected_status){
+				var display_parcel_output = document.getElementById('displayParcelOutput');
+				display_parcel_output.innerHTML=" ";
+				var selected_status = document.getElementById('displayParcelsFilter').value;
+				if(selected_status == "All"){
+					FilterAll();
+				}else if(selected_status == "Processing"){
+					FiterProcess();
+				}else if(selected_status == "Shipped"){
+					FiterShipped();
+
+				}else if(selected_status == "In Transit"){
+					displayInTransit();
+
+				}else if(selected_status == "Delivered"){
+					FiterDelivered();
+				}
+			}
+
+
+			function processParcel()
+			{
+				var user_tracking_number = document.getElementById('tbTrackingNumber').value;
+				var package_status = document.getElementById('processParcel_Status').value;
+				var display_parcel_output = document.getElementById('displayParcelOutput');
+				display_parcel_output.innerHTML = " ";
+				
+				
+				for(var i = 0; i < aParcel.length; i++ ){
+					if(aParcel[i].tracking_number == user_tracking_number){
+						display_parcel_output.innerHTML += aParcel[i].tracking_number + " | "+ aParcel[i].status + " | "+ aParcel[i].destination + " | "+ aParcel[i].weight +"(g)" + " | "+ aParcel[i].express + "</br>";
+					
+
+					if(package_status == "In Transit" && aParcel[i].express == true){ // if the package is In transit and yes for express shipping
+						console.log(package_status);
+						var flat_rate = 5;
+						const tax = 0.13;
+						var parcel_weight = aParcel[i].weight; //getting parcel weight
+						console.log(parcel_weight);
+						var express_shipping_cost = 10; //cost for express shipping
+						var shipping_cost = (flat_rate + 0.05 * parcel_weight) + tax; //shipping cost after tax
+						var express_shipping = (shipping_cost + express_shipping_cost);
+						var cost_after_express_shipping_cost = express_shipping.toFixed(2);
+						window.alert("Shipping for Parcel :" +  user_tracking_number + "\n" + "$"+cost_after_express_shipping_cost );
+						aParcel[i].status = package_status;
+						//display_parcel_output.innerHTML = " ";
+						//display_parcel_output.innerHTML += aParcel[i].tracking_number + " | "+ aParcel[i].status + " | "+ aParcel[i].destination + " | "+ aParcel[i].weight +"(g)" + " | "+ aParcel[i].express + "</br>";
+						displayInTransit();
+
+					}else if(package_status == "In Transit" && aParcel[i].express == false){
+						var flat_rate = 5;
+						const tax = 0.13;
+						var parcel_weight = aParcel[i].weight; //getting parcel weight
+						var shipping_cost = (parcel_weight * 0.05 +flat_rate + tax); //shipping cost after tax
+						var shipping_cost_without_express = shipping_cost.toFixed(2);
+						window.alert("Shipping for Parcel :" +  user_tracking_number + "\n" + "$"+shipping_cost_without_express);
+						aParcel[i].status = package_status;
+
+						displayInTransit();
+
+					}else if(package_status == "Delivered" && aParcel[i].express == true){
+						var flat_rate = 5;
+						const tax = 0.13;
+						var parcel_weight = aParcel[i].weight; //getting parcel weight
+						var express_shipping_cost = 10; //cost for express shipping
+						var shipping_cost = (parcel_weight * 0.05 +flat_rate + tax); //shipping cost after tax
+						var express_shipping = (shipping_cost + express_shipping_cost);
+						var cost_after_express_shipping_cost = express_shipping.toFixed(2);
+						window.alert("Shipping for Parcel :" +  user_tracking_number + "\n" + "$"+cost_after_express_shipping_cost);
+						aParcel[i].status = package_status;
+
+						FiterDelivered()
+						
+
+					}else if(package_status == "Delivered" && aParcel[i].express == false){
+						var flat_rate = 5;
+						const tax = 0.13;
+						var parcel_weight = aParcel[i].weight; //getting parcel weight
+						var shipping_cost = (parcel_weight * 0.05 +flat_rate + tax); //shipping cost after tax
+						var shipping_cost_without_express = shipping_cost.toFixed(2);;
+						window.alert("Shipping for Parcel :" +  user_tracking_number + "\n" + "$" + "$"+shipping_cost_without_express);
+						aParcel[i].status = package_status;
+
+						FiterDelivered();
+						
+					}else if(package_status == "Shipped" && aParcel[i].express == true){
+						var flat_rate = 5;
+						const tax = 0.13;
+						var parcel_weight = aParcel[i].weight; //getting parcel weight
+						var express_shipping_cost = 10; //cost for express shipping
+						var shipping_cost = (parcel_weight * 0.05 +flat_rate + tax); //shipping cost after tax
+						var express_shipping = (shipping_cost + express_shipping_cost);
+						var cost_after_express_shipping_cost =  express_shipping.toFixed(2);
+						window.alert("Shipping for Parcel :" +  user_tracking_number + "\n" + "$"+cost_after_express_shipping_cost);
+						aParcel[i].status = package_status;
+
+						FiterShipped();
+						
+					}else if(package_status == "Shipped" && aParcel[i].express == false){
+						var flat_rate = 5;
+						const tax = 0.13;
+						var parcel_weight = aParcel[i].weight; //getting parcel weight
+						var shipping_cost = (flat_rate + 0.05 * parcel_weight) + tax; //shipping cost after tax
+						var sshipping_cost_without_express = shipping_cost.toFixed(2);
+						window.alert("Shipping for Parcel :" +  user_tracking_number + "\n" + +"$"+shipping_cost_without_express);
+						//aParcel[i].status = package_status;
+
+						FiterShipped();
+						 
+					}
+					
+					
+					else{
+						console.log("tracking do not match!");
+
+					
+				}
+			}
+		}
+	}
+				
+
+
+			// displaying parcels to the output Div
+
+
+			/*
+				generateTrackingNumber()
+				Purpose: Helper function - generates a random tracking number
+				Parameters: none
+				Returns: string
+			*/
+			function generateTrackingNumber()
+			{
+				const TN_LENGTH = 10;
+				const TN_PREFIX = "IWD";
+				var tokens = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','1','2','3','4','5','6','7','8','9','0'];
+				var trackingNumber = new String(TN_PREFIX);
+				for(var x = 0; x < TN_LENGTH; x++) {
+					trackingNumber = trackingNumber.concat( tokens[ Math.floor( Math.random() * tokens.length ) ] );
+				}
+				//console.log("Generated: " + trackingNumber);
+				return trackingNumber;
+			}
+			
+
+			
+		</script>
+	</body>
+</html>
